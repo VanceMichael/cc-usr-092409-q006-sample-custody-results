@@ -1,0 +1,4 @@
+[
+  {"record_id":"v-101","species_code":"EGRET","observed_at":"2026-08-21T08:10:00+08:00","grid":"G-07","count":12,"source":"volunteer","direction":"east"},
+  {"record_id":"s-204","species_code":"EGRET","observed_at":"2026-08-21T08:12:00+08:00","grid":"G-08","count":12,"source":"sensor","direction":"east"}
+]

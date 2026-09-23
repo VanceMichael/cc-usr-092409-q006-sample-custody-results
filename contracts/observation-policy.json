@@ -1,0 +1,6 @@
+{
+  "sources": ["volunteer", "transect", "sensor"],
+  "states": ["independent", "merged", "needs_review"],
+  "required_fields": ["record_id", "species_code", "observed_at", "grid", "count", "source"],
+  "merge_factors": ["time_window", "adjacent_grid", "movement_direction", "device_digest"]
+}
