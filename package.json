@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "test": "node --test test/*.test.js",
-    "build": "node --check src/app.js && node --check src/server.js"
+    "build": "node --check src/app.js && node --check src/server.js && node --check src/custody.js && node --check src/eventlog.js && node --check src/policy.js && node --check src/service.js && node --check src/crypto.js && node --check src/errors.js"
   },
   "dependencies": {
     "koa": "^3.0.1"

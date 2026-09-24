@@ -1,0 +1,46 @@
+[
+  {
+    "step": "collect",
+    "request": {
+      "project_id": "P-WET-09",
+      "collector": "field-bob",
+      "site": { "site_id": "SITE-7", "lat": 30.1234, "lng": 120.5678 },
+      "matrix": "water",
+      "temp": { "min_c": 3.1, "max_c": 6.8 },
+      "scan_nonce": "scan-20260920-0001"
+    }
+  },
+  {
+    "step": "aliquot-to-lab-a",
+    "request": { "prepared_by": "field-bob", "tube_barcode": "TUBE-A", "seal_id": "SEAL-A", "destination_lab": "lab-a" }
+  },
+  {
+    "step": "aliquot-to-lab-b",
+    "request": { "prepared_by": "field-bob", "tube_barcode": "TUBE-B", "seal_id": "SEAL-B", "destination_lab": "lab-b" }
+  },
+  {
+    "step": "result-lab-a",
+    "request": {
+      "analyte": "OTTER_DNA",
+      "method": { "id": "edna-qpcr", "version": "1.4.2" },
+      "threshold": { "analyte": "OTTER_DNA", "cutoff": 30, "comparator": "gte" },
+      "value": 45,
+      "unit": "copies/uL",
+      "uncertainty": { "value": 2, "k": 2 },
+      "qc": [{ "type": "blank", "passed": true }, { "type": "positive_control", "passed": true }]
+    }
+  },
+  {
+    "step": "result-lab-b",
+    "request": {
+      "analyte": "OTTER_DNA",
+      "method": { "id": "edna-qpcr", "version": "1.4.2" },
+      "threshold": { "analyte": "OTTER_DNA", "cutoff": 30, "comparator": "gte" },
+      "value": 6,
+      "unit": "copies/uL",
+      "uncertainty": { "value": 2, "k": 2 },
+      "qc": [{ "type": "blank", "passed": true }, { "type": "positive_control", "passed": true }]
+    },
+    "expected_decision": "conflict"
+  }
+]

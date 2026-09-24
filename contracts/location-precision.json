@@ -1,0 +1,26 @@
+{
+  "project_policy": {
+    "sensitive_species": ["需要位置保护的物种/分析物代码"],
+    "members": [{ "actor": "成员标识", "role": "项目内角色" }],
+    "precision_by_role": {
+      "pi": "exact",
+      "lead": "exact",
+      "analyst": "grid",
+      "volunteer": "grid",
+      "viewer": "region"
+    },
+    "default_precision": "withhold"
+  },
+  "precision_tiers": {
+    "exact": "原始坐标，仅项目授权核心角色",
+    "grid": "降精度到网格中心，默认 0.05°",
+    "region": "降精度到区域中心，默认 0.5°",
+    "withhold": "完全隐去坐标（location=null），无项目权限者默认"
+  },
+  "rules": [
+    "仅 sensitive_species 命中的观测窗口触发降精度；其他物种保持 exact",
+    "查询者角色不在项目成员表中时使用 default_precision",
+    "降精度在查询时按调用者身份计算，原始坐标不离开服务边界",
+    "未确认（proposed）结论不会出现在观测窗口的已发布关联中"
+  ]
+}

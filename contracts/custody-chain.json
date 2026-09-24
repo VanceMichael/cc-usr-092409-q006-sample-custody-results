@@ -1,0 +1,72 @@
+{
+  "entities": ["sample", "aliquot", "batch", "result", "conclusion", "window", "project"],
+  "event_envelope": {
+    "event_id": "UUID，全局唯一",
+    "request_id": "调用方幂等键（Idempotency-Key）",
+    "seq": "日志全局单调递增序号",
+    "entity_type": "实体类型",
+    "entity_id": "实体标识",
+    "type": "事件类型",
+    "occurred_at": "事件实际发生时间（离线补报可早于 recorded_at）",
+    "recorded_at": "事件落盘时间",
+    "operator": "操作者（采集员/接收方/分析员/审核员/system）",
+    "offline": "是否离线补报",
+    "temp": "温控摘要 {min_c,max_c,excursions[]}",
+    "payload": "事件业务载荷，含内容去重键 _dedup_key",
+    "content_digest": "载荷内容指纹（SHA-256，键排序稳定序列化）",
+    "prev_hash": "同一实体内前一事件的链哈希；首事件为 64 个 0",
+    "hash": "覆盖除 hash 外全部信封字段的 SHA-256"
+  },
+  "events": {
+    "sample": ["SAMPLE_COLLECTED", "SAMPLE_DESTROYED"],
+    "aliquot": [
+      "ALIQUOT_PREPARED",
+      "HANDOVER_OPENED",
+      "HANDOVER_ACCEPTED",
+      "HANDOVER_OVERDUE",
+      "STORED",
+      "OPENED",
+      "TESTED",
+      "SEAL_REVOKED",
+      "ALIQUOT_DESTROYED",
+      "ADJUDICATION_RESOLVED"
+    ],
+    "batch": ["BATCH_REGISTERED"],
+    "result": ["RESULT_RECORDED", "RESULT_CORRECTED"],
+    "conclusion": [
+      "CONCLUSION_PROPOSED",
+      "CONCLUSION_REEVALUATED",
+      "CONCLUSION_CONFIRMED",
+      "CONCLUSION_SUPERSEDED",
+      "CONCLUSION_RETEST_OVERDUE"
+    ],
+    "window": ["WINDOW_REGISTERED"],
+    "project": ["PROJECT_POLICY_UPDATED"]
+  },
+  "integrity": {
+    "append_only": "事件只追加，不更新、不删除；状态由重放投影得到",
+    "tamper_detection": "重放时逐行校验 prev_hash 与 hash，篡改或缺行拒绝启动（chain_integrity）",
+    "content_fingerprint": "content_digest 不随登记字段（seq、prev_hash）变化，用于内容比对"
+  },
+  "idempotency": {
+    "request_id": "同一请求号重放返回原事件",
+    "scan_nonce": "同一扫码事务号即使更换请求号也只生效一次",
+    "concurrent_seal": "同一封签两个接收方并发确认：先到者落盘，后到者 409 seal_already_confirmed"
+  },
+  "offline_adjudication": {
+    "rule": "offline=true 且 occurred_at 早于该实体最后在线已签节点 → out_of_order=true、requires_adjudication=true",
+    "verdict_accept": "审核认可，事件不构成保管断点",
+    "verdict_reject": "审核驳回，记为保管断点 offline_event_rejected",
+    "while_pending": "待裁定期间结论不得判为一致/冲突，按 needs_retest 处理"
+  },
+  "cold_chain": {
+    "water_default_c": { "min": 2, "max": 8 },
+    "excursion_outcome": "温控越限记 temperature_excursion，链不可信 → needs_retest"
+  },
+  "recovery": {
+    "on_start": "重放日志重建全部投影，并立即巡检一次",
+    "handover_timeout_ms": 86400000,
+    "retest_due_ms": 259200000,
+    "tick": "超时未确认交接补 HANDOVER_OVERDUE；超期未复测结论补 CONCLUSION_RETEST_OVERDUE；补办本身幂等"
+  }
+}

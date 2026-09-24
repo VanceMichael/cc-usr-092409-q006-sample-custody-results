@@ -1,6 +1,32 @@
 {
-  "sources": ["volunteer", "transect", "sensor"],
-  "states": ["independent", "merged", "needs_review"],
-  "required_fields": ["record_id", "species_code", "observed_at", "grid", "count", "source"],
+  "sources": ["volunteer", "transect", "sensor", "laboratory"],
+  "observation_states": ["independent", "merged", "needs_review"],
+  "conclusion_states": ["proposed", "confirmed", "superseded"],
+  "decisions": ["consistent", "conflict", "suspected_contamination", "needs_retest"],
+  "decision_priority": [
+    "suspected_contamination",
+    "needs_retest",
+    "conflict",
+    "consistent"
+  ],
+  "decision_rules": {
+    "suspected_contamination": ["contaminative_qc_failure", "seal_compromised"],
+    "needs_retest": [
+      "chain_adjudication_pending",
+      "temperature_excursion",
+      "handover_overdue",
+      "late_handover",
+      "seal_revoked",
+      "offline_event_rejected",
+      "qc_failure",
+      "within_uncertainty_band",
+      "no_valid_result"
+    ],
+    "conflict": ["qualitative_disagreement", "values_diverge_beyond_uncertainty"],
+    "consistent": ["results_agree"]
+  },
+  "release_rule": "结论必须由研究员显式确认后才关联观测窗口；未确认的结果不得并入观测。",
+  "versioning_rule": "封签撤销、方法更正、迟到复测只重评未发布（proposed）结论；已发布（confirmed）结论不可改，产生 superseding 替代版并重新走确认。",
+  "required_result_fields": ["method.id", "method.version", "threshold.analyte", "threshold.cutoff", "uncertainty", "qc"],
   "merge_factors": ["time_window", "adjacent_grid", "movement_direction", "device_digest"]
 }
