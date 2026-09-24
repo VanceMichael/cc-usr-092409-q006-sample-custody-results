@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "test": "node --test test/*.test.js",
-    "build": "node --check src/app.js && node --check src/server.js"
+    "build": "node --check src/app.js && node --check src/server.js && for f in src/domain/*.js src/http/*.js; do node --check \"$f\" || exit 1; done"
   },
   "dependencies": {
     "koa": "^3.0.1"

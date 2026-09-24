@@ -1,0 +1,37 @@
+{
+  "event_types": ["collected", "aliquoted", "handed_over", "stored", "unsealed", "tested", "destroyed", "seal_revoked"],
+  "event_required_fields": ["eventId", "resourceKind", "resourceId", "type", "occurredAt", "operator", "fingerprint"],
+  "event_optional_fields": ["sealId", "temperature", "data", "status", "pendingReason", "idempotencyKey"],
+  "resource_kinds": ["sample", "tube", "batch"],
+  "temperature_summary": { "fields": ["minC", "maxC", "excursionCount"], "cold_range_c": [2, 8] },
+  "handover_stages": ["sent", "confirmed", "rejected"],
+  "handover_statuses": ["pending", "confirmed", "rejected", "revoked"],
+  "handover_timeout_hours": 2,
+  "event_statuses": ["live", "pending", "void"],
+  "pending_triggers": ["crossed_signed_node", "resource_destroyed"],
+  "idempotency": "same idempotencyKey or eventId returns the original event",
+  "conclusion_categories": ["consistent", "conflict", "suspected_contamination", "needs_retest"],
+  "decision_priority": [
+    "chain_breaks => suspected_contamination",
+    "qc_failure_or_outdated_method_or_uncertainty_crossing_threshold => needs_retest",
+    "single_lab => needs_retest",
+    "positive_and_negative => conflict",
+    "else => consistent"
+  ],
+  "qc_checks": ["blank_positive", "control_passed", "duplicate_rpd_vs_limit"],
+  "result_required_fields": ["labId", "batchId", "tubeId", "sampleId", "target", "methodId", "methodVersion", "value", "measuredAt", "operator"],
+  "result_traceability_fields": ["methodVersion", "thresholds", "qc", "uncertainty", "fingerprint", "retestOfResultId"],
+  "release_rule": "conclusion links to an observation window only after researcher confirmation",
+  "versioning": "seal revocation, method correction and late retest re-evaluate unpublished drafts; a published conclusion yields a new draft superseding version",
+  "location_precision": {
+    "project_lead": "exact",
+    "researcher": "~1km (2 decimals)",
+    "volunteer": "~10km (1 decimal)",
+    "public": "withheld"
+  },
+  "sensitive_targets": ["SPECIES_SENSITIVE", "OTTER", "STURGEON"],
+  "observation_window_minutes": 30,
+  "journal": "append-only hash-chained JSONL; replay verifies prevHash and payloadHash",
+  "recovery_todos": ["handover_timeout", "adjudication", "retest_due"],
+  "trace_returns": ["samples", "tubes", "batches", "chain_events", "chain_breaks", "chain_gaps", "qc_evidence", "methods", "approver", "observation_window"]
+}
